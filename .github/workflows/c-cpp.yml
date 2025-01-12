@@ -16,6 +16,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         submodules: recursive
+        token: ${{ secrets.YOUR_PAT }} # Используйте PAT для приватных подмодулей
 
     - name: Set up MSBuild
       uses: microsoft/setup-msbuild@v2
