@@ -12,8 +12,10 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout code with submodules
       uses: actions/checkout@v4
+      with:
+        submodules: recursive
 
     - name: Set up MSBuild
       uses: microsoft/setup-msbuild@v2
@@ -21,11 +23,7 @@ jobs:
     - name: Set up CMake
       uses: jwlawson/actions-setup-cmake@v2
       with:
-        cmake-version: '3.22' # Specify the desired CMake version
-
-    - name: Check Visual Studio installation
-      run: |
-        vswhere -all
+        cmake-version: '3.22'
 
     - name: Configure with CMake
       run: |
@@ -38,3 +36,9 @@ jobs:
     - name: Run tests with CMake
       run: |
         cmake --build build --config Release --target RUN_TESTS
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-output
+        path: build/Release/
