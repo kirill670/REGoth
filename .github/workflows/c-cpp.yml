@@ -1,0 +1,51 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up MSVC
+      uses: microsoft/setup-msvc@v2
+      with:
+        msvc-version: '14.2' # Adjust based on your project requirements
+
+    - name: Set up CMake
+      uses: dart-lang/setup-cmake@v2
+      with:
+        cmake-version: '3.22' # Specify the desired CMake version
+
+    - name: Configure with CMake
+      shell: cmd.exe
+      working-directory: ${{ github.workspace }}
+      run: |
+        cmake -S . -B build -G "Visual Studio 16 2019" -A x64
+
+    - name: Build with CMake
+      shell: cmd.exe
+      working-directory: ${{ github.workspace }}
+      run: |
+        cmake --build build --config Release --target ALL_BUILD
+
+    - name: Run tests with CMake
+      shell: cmd.exe
+      working-directory: ${{ github.workspace }}
+      run: |
+        cmake --build build --config Release --target RUN_TESTS
+
+    - name: Run distcheck equivalent (if applicable)
+      shell: cmd.exe
+      working-directory: ${{ github.workspace }}
+      run: |
+        # Add any additional steps required for distribution checks
+        # For example, packaging or installation tests
