@@ -12,11 +12,18 @@ jobs:
     runs-on: windows-latest
 
     steps:
+    - name: Set up SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+
     - name: Checkout code with submodules
       uses: actions/checkout@v4
       with:
         submodules: recursive
-        token: ${{ secrets.YOUR_PAT }} # Используйте PAT для приватных подмодулей
+        ssh-key: ${{ secrets.SSH_PRIVATE_KEY }} # Используем SSH для клонирования
 
     - name: Set up MSBuild
       uses: microsoft/setup-msbuild@v2
